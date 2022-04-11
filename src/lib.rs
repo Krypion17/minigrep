@@ -12,7 +12,12 @@ pub struct Config {
 impl Config {
     pub fn new(args: &[String]) -> Result<Config, &'static str> {
         if args.len() < 3 {
-            return Err("Not enough arguments");
+            if args.len() > 1 {
+                help();
+                process::exit(0);
+            } else {
+                return Err("Not enough arguments");
+            }
         }
 
         let query = args[1].clone();
@@ -27,7 +32,7 @@ impl Config {
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let contents = fs::read_to_string(config.filename)?;
 
-    let results = if config.case_sensitive{ 
+    let results = if config.case_sensitive { 
         search(&config.query, &contents)
     } else {
         search_case_insensitive(&config.query, &contents)
@@ -80,6 +85,16 @@ pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<String
 
 }
 
+pub fn help() {
+    println!("Minigrep
+Usage: minigrep [QUERY] [FILE]
+Search for QUERY in FILE.
+Flags:
+  -h, --help             Display this message
+      --case_sensitive   Search with case sensitivity (default)
+      --case_insensitive Search without case sensitivity");
+}
+
 fn is_case_sensitive(args: &[String]) -> bool {
     if args.len() < 4 {
         return env::var("CASE_INSENSITIVE").is_err();
@@ -123,4 +138,5 @@ Trust me.";
             search_case_insensitive(query, contents)
         );
     }
+
 }

@@ -11,3 +11,9 @@ cd minigrep
 cargo build --release
 ```
 > For building in different directory just __cd__ into your desired directory
+
+## Usage
+Here's a simple gif showing the usage
+<p align="center">
+    <img src="media/usage.gif">
+</p>

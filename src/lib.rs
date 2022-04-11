@@ -1,4 +1,7 @@
-use std::{error::Error, fs, env};
+use std::{error::Error, fs, env, process};
+
+pub const NORMAL: &str = "\x1b[0m";
+pub const RED: &str = "\x1b[1;31m";
 
 pub struct Config {
     pub query: String,
@@ -37,11 +40,18 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
+pub fn search<'a>(query: &str, contents: &'a str) -> Vec<String> {
     let mut results = Vec::new();
 
     for line in contents.lines() {
         if line.contains(query) {
+            let mut line = String::from(line);
+            let idx = line.find(&query).unwrap_or_else(||{
+                eprint!("Not found");
+                process::exit(1);
+            });
+            line.insert_str(idx, RED);
+            line.insert_str(idx + query.len() + 7, NORMAL);
             results.push(line);
         }
     }
@@ -49,12 +59,19 @@ pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
     results
 }
 
-pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
+pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<String> {
     let mut results = Vec::new();
     let query = query.to_lowercase();
 
     for line in contents.lines() {
         if line.to_lowercase().contains(&query) {
+            let mut line = String::from(line);
+            let idx = line.to_lowercase().find(&query).unwrap_or_else(||{
+                eprint!("Not found");
+                process::exit(1);
+            });
+            line.insert_str(idx, RED);
+            line.insert_str(idx + query.len() + 7, NORMAL);
             results.push(line);
         }
     }

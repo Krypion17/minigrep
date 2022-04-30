@@ -10,18 +10,39 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn new(args: &[String]) -> Result<Config, &'static str> {
-        if args.len() < 3 {
+    pub fn new(mut args: env::Args) -> Result<Config, &'static str> {
+        /* if args.len() < 3 {
             if args.len() > 1 {
                 help();
-                process::exit(0);
             } else {
                 return Err("Not enough arguments");
             }
         }
 
         let query = args[1].clone();
-        let filename = args[2].clone();
+        let filename = args[2].clone(); */
+
+        args.next();
+
+        let query = match args.next() {
+            Some(arg) => {
+                if !(arg.contains("help") || arg.contains("-h")) {
+                    arg
+                } else {
+                    help();
+                    process::exit(0);
+                }
+            },
+            None => { 
+                help(); 
+                process::exit(0);
+            },
+        };
+
+        let filename = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Didn't get a file name"),
+        };
 
         let case_sensitive = is_case_sensitive(args);
 
@@ -95,17 +116,18 @@ Flags:
       --case_insensitive Search without case sensitivity");
 }
 
-fn is_case_sensitive(args: &[String]) -> bool {
-    if args.len() < 4 {
-        return env::var("CASE_INSENSITIVE").is_err();
-    }
-
-    if args[3] == "--case_sensitive" {
-        true
-    } else if args[3] == "--case_insensitive" {
-        false
-    } else {
-        false
+fn is_case_sensitive(mut args: env::Args) -> bool {
+    match args.next() {
+        Some(arg) => {
+            if arg == "--case_sensitive" {
+                true
+            } else if arg == "--case_insensitive" {
+                false
+            } else {
+                false
+            }
+        },
+        None => env::var("CASE_INSENSITIVE").is_err(),
     }
 }
 

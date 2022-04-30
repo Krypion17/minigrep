@@ -11,17 +11,6 @@ pub struct Config {
 
 impl Config {
     pub fn new(mut args: env::Args) -> Result<Config, &'static str> {
-        /* if args.len() < 3 {
-            if args.len() > 1 {
-                help();
-            } else {
-                return Err("Not enough arguments");
-            }
-        }
-
-        let query = args[1].clone();
-        let filename = args[2].clone(); */
-
         args.next();
 
         let query = match args.next() {

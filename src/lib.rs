@@ -56,10 +56,10 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 }
 
 pub fn search<'a>(query: &str, contents: &'a str) -> Vec<String> {
-    let mut results = Vec::new();
-
-    for line in contents.lines() {
-        if line.contains(query) {
+    contents
+        .lines()
+        .filter(|line| line.contains(query))
+        .map(|line| {
             let mut line = String::from(line);
             let idx = line.find(&query).unwrap_or_else(||{
                 eprint!("Not found");
@@ -67,31 +67,27 @@ pub fn search<'a>(query: &str, contents: &'a str) -> Vec<String> {
             });
             line.insert_str(idx, RED);
             line.insert_str(idx + query.len() + 7, NORMAL);
-            results.push(line);
-        }
-    }
-
-    results
+            line
+        })
+        .collect()
 }
 
 pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<String> {
-    let mut results = Vec::new();
     let query = query.to_lowercase();
-
-    for line in contents.lines() {
-        if line.to_lowercase().contains(&query) {
+    contents
+        .lines()
+        .filter(|line| line.to_lowercase().contains(&query))
+        .map(|line| {
             let mut line = String::from(line);
-            let idx = line.to_lowercase().find(&query).unwrap_or_else(||{
+            let idx = line.to_lowercase().find(&query.to_lowercase()).unwrap_or_else(||{
                 eprint!("Not found");
                 process::exit(1);
             });
             line.insert_str(idx, RED);
             line.insert_str(idx + query.len() + 7, NORMAL);
-            results.push(line);
-        }
-    }
-
-    results
+            line
+        })
+        .collect()
 
 }
 

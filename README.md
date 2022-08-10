@@ -1,9 +1,16 @@
 # Minigrep
-A mini version of grep as the name says that i made while learning rust.
+A mini version of grep as the name says that i made while learning rust. \
 It isn't unique or anything so don't expect much.
 
 ## Installation
-**Prerequisites**- rustc, rustup, cargo
+### NixOS
+**Prerequisites**- Nix with [flake](https://nixos.wiki/wiki/Flakes) support
+```
+nix shell github:Krypion17/minigrep
+```
+
+### Non - NixOS
+**Prerequisites**- rustc, rustup, cargo \
 **Get from here**- https://www.rust-lang.org/tools/install
 ```
 git clone https://github.com/Krypion17/minigrep.git
